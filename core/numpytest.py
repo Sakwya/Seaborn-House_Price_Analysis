@@ -4,25 +4,32 @@ import matplotlib.pyplot as plt
 from scipy import stats
 import seaborn as sns
 
-sns.set(style="darkgrid")
-colors = sns.dark_palette('orange',12)
-sns.set_palette(colors)
-x = np.linspace(-np.pi, np.pi, 100)
-sin = np.fabs(np.sin(x))
-y = {
-    'sin': sin,
-    'sin2': sin * 2,
-    'sin3': sin * 3,
-    'sin4': sin * 4,
-    'sin5': sin * 5,
-    'sin6': sin * 6,
-    'sin7': sin * 7,
-    'sin8': sin * 8,
-    'sin9': sin * 9,
-    'sin10': sin * 10,
-    'sin11': sin * 11,
-    'sin12': sin * 12,
-}
-df = pd.DataFrame(y, index=x)
-df.plot.area()
+sns.set_style("darkgrid")
+sns.set_palette(sns.hls_palette(n_colors=14))
+plt.rcParams['font.sans-serif'] = 'DengXian'
+
+df = pd.read_csv("house_info.csv", encoding="utf-8")
+district = df['区域'].to_numpy()
+D = df['室'].to_numpy()
+L = df['厅'].to_numpy()
+area = df['房间大小'].to_numpy()
+windows = df['窗户朝向'].to_numpy()
+fixture = df['装修造型'].to_numpy()
+
+year = df['修建年份'].to_numpy()
+hType = df['房源'].to_numpy()
+price = df['平米房价'].to_numpy()
+
+districts = np.unique(district)
+da = []
+db = []
+for district_name in districts:
+    bool = [district == district_name]
+    da.append(price[tuple(bool)])
+
+for df in da:
+    db.append(df[:2217])
+da = np.asarray(db)
+df = pd.DataFrame(da.T, columns=districts)
+df.plot.hist(bins=100, alpha=0.5, figsize=(10, 6))
 plt.show()

@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/案例" />
       <excludeFolder url="file://$MODULE_DIR$/案例汇总" />
       <excludeFolder url="file://$MODULE_DIR$/第二十次课课堂分析" />
+      <excludeFolder url="file://$MODULE_DIR$/info-new" />
     </content>
     <orderEntry type="jdk" jdkName="python-310" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
