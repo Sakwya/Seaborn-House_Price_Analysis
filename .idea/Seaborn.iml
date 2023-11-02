@@ -2,13 +2,12 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/core" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/info" />
       <excludeFolder url="file://$MODULE_DIR$/案例" />
       <excludeFolder url="file://$MODULE_DIR$/案例汇总" />
       <excludeFolder url="file://$MODULE_DIR$/第二十次课课堂分析" />
     </content>
-    <orderEntry type="jdk" jdkName="py310" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="python-310" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
