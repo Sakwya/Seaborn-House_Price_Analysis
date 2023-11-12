@@ -10,7 +10,7 @@ sns.set_palette(sns.hls_palette(n_colors=14))
 plt.rcParams['font.sans-serif'] = 'DengXian'
 
 # 读取数据并分解为一维数组
-df = pd.read_csv("house_info.csv", encoding="utf-8")
+df = pd.read_csv("data/house_info.csv", encoding="utf-8")
 np_district = df['区域'].to_numpy()
 np_D = df['室'].to_numpy()
 np_L = df['厅'].to_numpy()

@@ -1,1 +1,0 @@
-SELECT * FROM house_info WHERE 室 = 10
