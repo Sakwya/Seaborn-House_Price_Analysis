@@ -1,1 +1,1 @@
-from .request import request
+from spider.request import request

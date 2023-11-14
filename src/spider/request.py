@@ -63,6 +63,11 @@ def request(url: str, cache: bool = True, save: bool = True, file_path: str = "o
         soup = BeautifulSoup(html, "html.parser")
         items = soup.select(selector)
         BSoup = BeautifulSoup('', "html.parser")
+        if len(items) == 0:
+            print(f"\r\033[91mElement (CSS selector: \033[93m{selector}\033[91m) Was Not Found On\033[0m {url}.")
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            return None
         for item in items:
             BSoup.append(item)
         html = BSoup.prettify()
