@@ -1,7 +1,5 @@
-from .get_catalogue import run as get_catalogue
-from .get_house_raw import run as get_house_raw
-
-root_site = "https://sh.lianjia.com/ershoufang/"
+# root_site = "https://sh.lianjia.com/ershoufang/"
+root_site = "https://sh.ke.com/ershoufang/"
 district = [
     "pudong",
     "minhang",
@@ -20,5 +18,10 @@ district = [
     "jinshan",
     "chongming"
 ]
-MAX_THREAD = 5
-MAX_PROCESS = 5
+MAX_THREAD = 8
+MAX_PROCESS = 6
+
+from .get_catalogue import run as get_catalogue
+from .get_house_raw import run as get_house_raw
+
+

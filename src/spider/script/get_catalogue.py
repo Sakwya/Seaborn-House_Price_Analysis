@@ -4,7 +4,7 @@ import time
 import multiprocessing
 import threading
 import spider
-from . import *
+from src.spider.script import *
 
 
 def get_catalogue(index: int):
@@ -12,7 +12,8 @@ def get_catalogue(index: int):
     page_no = int(index / 16) + 1
     spider.request(root_site + district[district_no] + "/pg" + str(page_no),
                    file_path="sellListContent/" + district[district_no],
-                   cache=False, save=True, selector="div.leftContent > ul.sellListContent  div.title  a")
+                   cache=False, save=True, suffix=".txt",
+                   xpath="//ul[@class = \"sellListContent\"]//li[@class = \"clear\"]/a/@href")
 
 
 def process_get_catalogue(process_no: int, max_iter, process_queue):
@@ -74,3 +75,8 @@ def run():
     pool.join()
     manager.shutdown()
     print(time.time() - t)
+
+
+if __name__ == "__main__":
+    print(spider.request("https://sh.ke.com/ershoufang/minhang/pg100/", cache=False,
+                         xpath="//ul[@class = \"sellListContent\"]//li[@class = \"clear\"]/a/@href"))

@@ -14,18 +14,19 @@ def get_catalogues() -> list:
     for i in range(len(district)):
         for file in os.listdir(f"./cache/sellListContent/{district[i]}"):
             catalogues.append(f"./cache/sellListContent/{district[i]}/{file}")
+        # for file in os.listdir(f"../cache/sellListContent/{district[i]}"):
+        #     catalogues.append(f"../cache/sellListContent/{district[i]}/{file}")
     return catalogues
 
 
 def get_house_raw(catalogue: str):
     file_path = os.path.join("house_raw", catalogue.split('/')[-2])
     with open(catalogue, encoding="utf-8") as f:
-        soup = BeautifulSoup(f.read(), "html.parser")
-    house_hrefs = []
-    for house_href in soup.find_all("a"):
-        house_hrefs.append(house_href.get("href"))
+        house_hrefs = f.read().split('\n')
+        house_hrefs.remove('')
     for house_href in house_hrefs:
-        spider.request(house_href, file_path=file_path, cache=True, save=True, selector="body")
+        spider.request(house_href, file_path=file_path, cache=True, save=True,
+                       xpath="/html/body/div[@class = \"sellDetailPage\"]/div")
 
 
 def process_get_house_raw(process_no: int, catalogues, process_queue):
@@ -88,3 +89,8 @@ def run():
     pool.join()
     manager.shutdown()
     print(time.time() - t)
+
+
+if __name__ == "__main__":
+    print(spider.request("https://sh.ke.com/ershoufang/107108377095.html", cache=False,
+                         xpath="/html/body/div[@class = \"sellDetailPage\"]/div"))

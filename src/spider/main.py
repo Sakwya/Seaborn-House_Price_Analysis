@@ -1,6 +1,7 @@
 from script import *
 
 if __name__ == "__main__":
+    # get_catalogue()
     get_house_raw()
     pass
 
