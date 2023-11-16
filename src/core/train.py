@@ -7,7 +7,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import tqdm
-from core import dataProcess as dataProcess
+from core import DataProcess
 import os
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -74,14 +74,14 @@ def get_net(feature_num):
 
 
 if __name__ == "__main__":
-    dp = dataProcess.DataProcess(from_csv=False, from_pt=True)
+    dp = DataProcess(from_csv=False, from_pt=True)
     data = dp.data
     target = dp.target
-    data = data.to('cuda')
-    target = target.to('cuda')
+    # data = data.to('cuda')
+    # target = target.to('cuda')
     net = get_net(data.shape[1])
     net = net.float()
-    net = net.to('cuda')
+    # net = net.to('cuda')
     loss = train(net, data, target, 5, 100, 0.01, 0.001)
     print(loss)
     loss = pd.DataFrame(loss)
