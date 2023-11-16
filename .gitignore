@@ -7,3 +7,4 @@
 /.idea/
 /src/spider/cache
 /src/spider/script/cache/
+*/__pycache__/
