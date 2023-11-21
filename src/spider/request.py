@@ -18,14 +18,14 @@ session.mount('https://', adapter)
 parser = etree.HTMLParser(encoding="utf-8")
 
 
-def encode(string: str, suffix: str = ".html"):
+def encode(string: str):
     """
     对字符串进行加密
     :param string: 要加密的字符串
     :param suffix： 自动添加的后缀
     :return: 加密后的字符串
     """
-    return md5(string.encode("utf-8")).hexdigest() + suffix
+    return md5(string.encode("utf-8")).hexdigest()
 
 
 def get_html(url: str, **kwargs):
@@ -42,7 +42,7 @@ def get_html(url: str, **kwargs):
 
 
 def request(url: str, cache: bool = True, save: bool = True, file_path: str = "other",
-            xpath: str = None, selector: str = None, suffix: str = ".html", **kwargs):
+            xpath: str = None, selector: str = None, suffix: str = ".html", use_md5=True, filename=None, **kwargs):
     """
     请求网页
     :param url: 网址
@@ -52,12 +52,20 @@ def request(url: str, cache: bool = True, save: bool = True, file_path: str = "o
     :param xpath: 网页内容的xpath，用于选择性保存内容
     :param selector: 网页内容的css选择器，用于选择性保存内容
     :param suffix: 存储文件的后缀名
+    :param use_md5: 是否使用md5加密文件名
+    :param filename: 设置文件名，优先级高于use_md5
     :param kwargs: 请求参数
     :return: 网页的html
     """
     dir_path = os.path.join('cache', file_path)
+    if filename is None:
+        if use_md5:
+            filename = encode(url)
+        else:
+            raise TypeError("Filename must be set when not using md5.")
+    filename = filename + suffix
     if cache or save:
-        file_path = os.path.join('cache', file_path, encode(url, suffix=suffix))
+        file_path = os.path.join('cache', file_path, filename)
         if cache and os.path.exists(file_path):
             with open(file_path, "r", encoding="utf-8") as f:
                 html = f.read()
@@ -102,3 +110,11 @@ def request(url: str, cache: bool = True, save: bool = True, file_path: str = "o
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html)
     return html
+
+
+def save_file(data: str, filename: str, file_path):
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+        print(f"Create {file_path}")
+    with open(os.path.join(file_path, filename), "w", encoding="utf-8") as f:
+        f.write(data)

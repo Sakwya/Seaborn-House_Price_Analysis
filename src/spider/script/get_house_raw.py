@@ -25,8 +25,22 @@ def get_house_raw(catalogue: str):
         house_hrefs = f.read().split('\n')
         house_hrefs.remove('')
     for house_href in house_hrefs:
-        spider.request(house_href, file_path=file_path, cache=True, save=True,
-                       xpath="/html/body/div[@class = \"sellDetailPage\"]/div")
+        if spider.request(house_href, file_path=file_path, cache=True, save=True,
+                          filename=house_href.split('/')[-1], use_md5=False, suffix="",
+                          xpath="/html/body/div[@class = \"sellDetailPage\"]"
+                                "/div[4]/div[1]/div[2]/div[4]/div[1]|"
+                                "/html/body/div[@class = \"sellDetailPage\"]"
+                                "/div[4]/div[1]/div[2]/div[4]/div[2]|"
+                                "/html/body/div[@class = \"sellDetailPage\"]"
+                                "/div[5]//div[@class = \"introContent\"]//ul") is None:
+            spider.request(house_href, file_path=file_path, cache=False, save=True,
+                           filename=house_href.split('/')[-1], suffix="",
+                           xpath="/html/body/div[@class = \"sellDetailPage\"]"
+                                 "/div[4]/div[1]/div[2]/div[4]/div[1]|"
+                                 "/html/body/div[@class = \"sellDetailPage\"]"
+                                 "/div[4]/div[1]/div[2]/div[4]/div[2]|"
+                                 "/html/body/div[@class = \"sellDetailPage\"]"
+                                 "/div[5]//div[@class = \"introContent\"]//ul")
 
 
 def process_get_house_raw(process_no: int, catalogues, process_queue):
@@ -92,5 +106,4 @@ def run():
 
 
 if __name__ == "__main__":
-    print(spider.request("https://sh.ke.com/ershoufang/107108377095.html", cache=False,
-                         xpath="/html/body/div[@class = \"sellDetailPage\"]/div"))
+    get_house_raw(get_catalogues()[0])
