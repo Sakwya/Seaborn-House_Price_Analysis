@@ -11,8 +11,8 @@ def get_catalogue(index: int):
     district_no = index % 16
     page_no = int(index / 16) + 1
     spider.request(f"{root_site}{district[district_no]}/pg{page_no}{select})",
-                   file_path="sellListContent/" + district[district_no],
-                   cache=False, save=True, suffix=".txt", filename=str(page_no),use_md5=False,
+                   file_path="sellListContent/" + district[district_no], debug=False,
+                   cache=False, save=True, suffix=".txt", filename=str(page_no), use_md5=False,
                    xpath="/html/body/div[1]/div[4]/div[1]/div[4]/ul[@class = \"sellListContent\"]"
                          "//li[@class = \"clear\"]/a/@href")
 

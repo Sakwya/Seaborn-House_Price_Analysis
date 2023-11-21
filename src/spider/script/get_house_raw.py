@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup
 import os
 from spider.script import *
 
+Task_Num = MAX_PROCESS * 2
+
 
 def get_catalogues() -> list:
     catalogues = []
@@ -26,7 +28,7 @@ def get_house_raw(catalogue: str):
         house_hrefs.remove('')
     for house_href in house_hrefs:
         filename = house_href.split('/')[-1]
-        if not os.path.exists(os.path.join('cache',file_path, filename)):
+        if not os.path.exists(os.path.join('cache', file_path, filename)):
             if spider.request(house_href, file_path=file_path, cache=False, save=True,
                               filename=filename, suffix="", debug=False,
                               xpath="/html/body/div[@class = \"sellDetailPage\"]"
@@ -66,14 +68,14 @@ def process_get_house_raw(process_no: int, catalogues, process_queue):
     print(f"\rProcess {process_no} finished")
 
 
-def thread_get_house_raw(process_no: int, thread_no: int, catalogues, queue):
-    i = process_no + MAX_PROCESS * thread_no
+def thread_get_house_raw(task_no: int, thread_no: int, catalogues, queue):
+    i = task_no + Task_Num * thread_no
     max_iter = len(catalogues)
     while i < max_iter:
         get_house_raw(catalogues[i])
         queue.put(i)
-        i += MAX_PROCESS * MAX_THREAD
-    print(f"\rThread{process_no}-{thread_no} finished")
+        i += Task_Num * MAX_THREAD
+    print(f"\rThread{task_no}-{thread_no} finished")
 
 
 def run():
@@ -86,7 +88,7 @@ def run():
     pbar = tqdm.tqdm(total=len(target))
 
     process_list = []
-    for i in range(MAX_PROCESS):
+    for i in range(Task_Num):
         process = pool.apply_async(process_get_house_raw, args=(i, target, progress_queue))
         process_list.append(process)
     while True:

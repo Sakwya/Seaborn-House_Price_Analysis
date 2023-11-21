@@ -35,7 +35,7 @@ def get_house_info(house_raw: str):
         'neighbor_no': position_info,
         'district': around_info[0],
         'region': around_info[1],
-        'houseYear': year_info,
+        'buildingYear': year_info,
         'housePlan': house_info.pop(0)[1],
         'houseArea': house_info.pop(0)[1],
         'houseType': house_info.pop(0)[1],
@@ -50,7 +50,7 @@ def get_house_info(house_raw: str):
         os.makedirs(dir_path)
         print(f"\rCreate {dir_path}")
     with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(str(houseInfo))
+        f.write(str(houseInfo).replace('\'', '\"'))
 
 
 def process_get_house_info(process_no: int, house_row, process_queue):
