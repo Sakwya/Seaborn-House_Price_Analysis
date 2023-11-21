@@ -1,8 +1,8 @@
 from script import *
 
 if __name__ == "__main__":
-    # get_catalogue()
-    get_house_raw()
+    get_catalogue()
+    # get_house_raw()
+    # get_house_info()
     pass
 
-# match = re.search(r'resblockPosition:\s*\'([0-9.]+,[0-9.]+)\'', html_content)

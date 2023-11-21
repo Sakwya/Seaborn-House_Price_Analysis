@@ -42,7 +42,8 @@ def get_html(url: str, **kwargs):
 
 
 def request(url: str, cache: bool = True, save: bool = True, file_path: str = "other",
-            xpath: str = None, selector: str = None, suffix: str = ".html", use_md5=True, filename=None, **kwargs):
+            xpath: str = None, selector: str = None, suffix: str = ".html", use_md5=True, filename=None, debug=True,
+            **kwargs):
     """
     请求网页
     :param url: 网址
@@ -54,6 +55,7 @@ def request(url: str, cache: bool = True, save: bool = True, file_path: str = "o
     :param suffix: 存储文件的后缀名
     :param use_md5: 是否使用md5加密文件名
     :param filename: 设置文件名，优先级高于use_md5
+    :param debug: 是否打印调试信息
     :param kwargs: 请求参数
     :return: 网页的html
     """
@@ -75,12 +77,13 @@ def request(url: str, cache: bool = True, save: bool = True, file_path: str = "o
         html = get_html(url, **kwargs)
 
     if xpath is not None:
-        if selector is not None:
+        if debug and selector is not None:
             print(f"\033[91mCSS selector and xpath are both specified, using xpath.\033[0m")
         html = etree.HTML(html, parser)
         items = html.xpath(xpath)
         if len(items) == 0:
-            print(f"\r\033[91mElement (Xpath: \033[93m{xpath}\033[91m) Was Not Found On\033[0m {url}.")
+            if debug:
+                print(f"\r\033[91mElement (Xpath: \033[93m{xpath}\033[91m) Was Not Found On\033[0m {url}.")
             # if os.path.exists(file_path):
             #     os.remove(file_path)
             return None
@@ -91,12 +94,13 @@ def request(url: str, cache: bool = True, save: bool = True, file_path: str = "o
             else:
                 html = html + etree.tostring(item, encoding="utf-8").decode("utf-8") + '\n'
 
-    elif selector is not None:
+    elif debug and selector is not None:
         soup = BeautifulSoup(html, "html.parser")
         items = soup.select(selector)
         BSoup = BeautifulSoup('', "html.parser")
         if len(items) == 0:
-            print(f"\r\033[91mElement (CSS selector: \033[93m{selector}\033[91m) Was Not Found On\033[0m {url}.")
+            if debug:
+                print(f"\r\033[91mElement (CSS selector: \033[93m{selector}\033[91m) Was Not Found On\033[0m {url}.")
             # if os.path.exists(file_path):
             #     os.remove(file_path)
             return None

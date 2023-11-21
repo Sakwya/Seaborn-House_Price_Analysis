@@ -3,42 +3,54 @@ import tqdm
 import time
 import multiprocessing
 import threading
-from lxml import etree
 from bs4 import BeautifulSoup
 import os
-import re
-
-import spider
 from spider.script import *
 
 
 def get_house_raw() -> list:
     house_raw = []
-    for district_dir in os.listdir("../cache/house_raw/"):
-        # for file in os.listdir(f"./cache/house_raw/{district[i]}"):
-        #     house_raw.append(f"./cache/house_raw/{district[i]}/{file}")
-        for file in os.listdir(f"../cache/house_raw/{district_dir}"):
-            house_raw.append(f"../cache/house_raw/{district_dir}/{file}")
+    for district_dir in os.listdir("./cache/house_raw/"):
+        for file in os.listdir(f"./cache/house_raw/{district_dir}"):
+            house_raw.append(f"./cache/house_raw/{district_dir}/{file}")
+    # for district_dir in os.listdir("../cache/house_raw/"):
+    #     for file in os.listdir(f"../cache/house_raw/{district_dir}"):
+    #         house_raw.append(f"../cache/house_raw/{district_dir}/{file}")
     return house_raw
 
 
 def get_house_info(house_raw: str):
-    file_path = house_raw.replace('house_raw/', 'house_info/')
+    file_path = house_raw.replace('house_raw/', 'house_info/').replace('html', 'txt')
     with open(house_raw, encoding="utf-8") as f:
         html = f.read()
-    # position = re.search(r'resblockPosition:\s*\'([0-9.]+,[0-9.]+)\'', html).group(1).split(',')
-    # position = (float(position[0]), float(position[1]))
     soup = BeautifulSoup(html, "lxml")
+    year_info = soup.select_one("div.subInfo").text.split('/')[0]
+    position_info = soup.select_one("div.communityName > a").get('href')
+    position_info = position_info.split('/')[-2]
+    around_info = [pair.text for pair in soup.select("div.areaName >span > a")]
     house_info = [pair.text.split() for pair in soup.select("li")]
-    if len(house_info) != 20:
+    if len(house_info) < 19:
         raise ValueError(f"Can not find enough items in {house_raw}")
-    housePlan = house_info.pop(0)[1]
-    houseArea = house_info.pop(0)[1]
-    houseType = house_info.pop(0)[1]
-    buildingType = house_info.pop(0)[1]
-    houseOrientation = house_info.pop(2)[1]
-    print(housePlan, houseArea, houseType, buildingType)
-    print(house_info)
+    houseInfo = {
+        'neighbor_no': position_info,
+        'district': around_info[0],
+        'region': around_info[1],
+        'houseYear': year_info,
+        'housePlan': house_info.pop(0)[1],
+        'houseArea': house_info.pop(0)[1],
+        'houseType': house_info.pop(0)[1],
+        'buildingType': house_info.pop(0)[1],
+        'houseComprisingArea': house_info.pop(1)[1],
+        'houseOrientation': house_info.pop(1)[1],
+        'buildingStructure': house_info.pop(1)[1],
+        'houseDecoration': house_info.pop(1)[1],
+    }
+    dir_path = file_path.rsplit('/', 1)[0]
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+        print(f"\rCreate {dir_path}")
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(str(houseInfo))
 
 
 def process_get_house_info(process_no: int, house_row, process_queue):
@@ -104,9 +116,7 @@ def run():
 
 
 if __name__ == "__main__":
-    paths = get_house_raw()
-    for path in paths:
-        get_house_info(path)
+    get_house_info("./107107936436.html")
 # html = spider.request("https://sh.lianjia.com/ershoufang/107107606471.html")
 # t = time.time()
 # match = re.search(r'resblockPosition:\s*\'([0-9.]+,[0-9.]+)\'', html)

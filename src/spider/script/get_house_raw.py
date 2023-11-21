@@ -25,22 +25,21 @@ def get_house_raw(catalogue: str):
         house_hrefs = f.read().split('\n')
         house_hrefs.remove('')
     for house_href in house_hrefs:
-        if spider.request(house_href, file_path=file_path, cache=True, save=True,
-                          filename=house_href.split('/')[-1], use_md5=False, suffix="",
-                          xpath="/html/body/div[@class = \"sellDetailPage\"]"
-                                "/div[4]/div[1]/div[2]/div[4]/div[1]|"
-                                "/html/body/div[@class = \"sellDetailPage\"]"
-                                "/div[4]/div[1]/div[2]/div[4]/div[2]|"
-                                "/html/body/div[@class = \"sellDetailPage\"]"
-                                "/div[5]//div[@class = \"introContent\"]//ul") is None:
-            spider.request(house_href, file_path=file_path, cache=False, save=True,
-                           filename=house_href.split('/')[-1], suffix="",
-                           xpath="/html/body/div[@class = \"sellDetailPage\"]"
-                                 "/div[4]/div[1]/div[2]/div[4]/div[1]|"
-                                 "/html/body/div[@class = \"sellDetailPage\"]"
-                                 "/div[4]/div[1]/div[2]/div[4]/div[2]|"
-                                 "/html/body/div[@class = \"sellDetailPage\"]"
-                                 "/div[5]//div[@class = \"introContent\"]//ul")
+        filename = house_href.split('/')[-1]
+        if not os.path.exists(os.path.join('cache',file_path, filename)):
+            if spider.request(house_href, file_path=file_path, cache=False, save=True,
+                              filename=filename, suffix="", debug=False,
+                              xpath="/html/body/div[@class = \"sellDetailPage\"]"
+                                    "div[4]/div[1]/div[2]/div[3]/div[3]/div[2]|"
+                                    "/html/body/div[@class = \"sellDetailPage\"]"
+                                    "/div[4]/div[1]/div[2]/div[4]/div[1]|"
+                                    "/html/body/div[@class = \"sellDetailPage\"]"
+                                    "/div[4]/div[1]/div[2]/div[4]/div[2]|"
+                                    "/html/body/div[@class = \"sellDetailPage\"]"
+                                    "/div[5]//div[@class = \"introContent\"]//ul") is None:
+                print(house_href)
+        else:
+            pass
 
 
 def process_get_house_raw(process_no: int, catalogues, process_queue):

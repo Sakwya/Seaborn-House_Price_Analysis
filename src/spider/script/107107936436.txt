@@ -1,0 +1,1 @@
+{'neighbor_no': '5011000014551', 'district': '宝山', 'region': '杨行', 'housePlan': '2室2厅1卫', 'houseArea': '94.51㎡', 'houseType': '平层', 'buildingType': '板楼', 'houseComprisingArea': '90㎡', 'houseOrientation': '南', 'buildingStructure': '钢混结构', 'houseDecoration': '精装'}

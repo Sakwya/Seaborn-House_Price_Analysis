@@ -1,0 +1,1 @@
+{'neighbor_href': '/xiaoqu/5011000009438/', 'district': '宝山', 'region': '淞宝', 'housePlan': '3室2厅2卫', 'houseArea': '147.56㎡', 'houseType': '暂无数据', 'buildingType': '板楼', 'houseComprisingArea': '暂无', 'houseOrientation': '南', 'buildingStructure': '砖混结构', 'houseDecoration': '其他'}
