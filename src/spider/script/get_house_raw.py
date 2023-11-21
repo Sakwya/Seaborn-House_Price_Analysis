@@ -30,7 +30,7 @@ def get_house_raw(catalogue: str):
             if spider.request(house_href, file_path=file_path, cache=False, save=True,
                               filename=filename, suffix="", debug=False,
                               xpath="/html/body/div[@class = \"sellDetailPage\"]"
-                                    "div[4]/div[1]/div[2]/div[3]/div[3]/div[2]|"
+                                    "/div[4]/div[1]/div[2]/div[3]/div[3]/div[2]|"
                                     "/html/body/div[@class = \"sellDetailPage\"]"
                                     "/div[4]/div[1]/div[2]/div[4]/div[1]|"
                                     "/html/body/div[@class = \"sellDetailPage\"]"
