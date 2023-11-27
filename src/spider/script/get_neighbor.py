@@ -26,13 +26,27 @@ def get_neighbor_nos() -> list:
 
 def get_neighbor(neighbor_no: str):
     html = spider.request(f"{root_site.replace('ershoufang', 'xiaoqu')}{neighbor_no}",
-                          file_path="neighbor", filename=neighbor_no)
-    position = re.search(r'resblockPosition:\s*\'([0-9.]+,[0-9.]+)\'', html).group(1).split(',')
-    print(position)
+                          file_path="neighbor_raw", filename=neighbor_no)
+    try:
+        position = re.search(r'resblockPosition:\s*\'([0-9.]+,[0-9.]+)\'', html).group(1).split(',')
+    except AttributeError:
+        html = spider.request(f"{root_site.replace('ershoufang', 'xiaoqu')}{neighbor_no}",
+                              file_path="neighbor_raw", filename=neighbor_no, cache=False)
+        print(f"\033[93mRecapture {root_site.replace('ershoufang', 'xiaoqu')}{neighbor_no}\033[0m")
+        position = re.search(r'resblockPosition:\s*\'([0-9.]+,[0-9.]+)\'', html).group(1).split(',')
     soup = BeautifulSoup(html, 'lxml')
     items = [pair.text.split() for pair in soup.select("div.xiaoquInfoItem")]
-    print(items)
-
+    neighborInfo = {
+        'longitude': position[0],
+        'latitude': position[1],
+    }
+    try:
+        with open(f'./cache/neighbor_info/{neighbor_no}.txt', 'w', encoding='utf-8') as f:
+            f.write(str(neighborInfo).replace("\'", "\""))
+    except FileNotFoundError:
+        os.makedirs('./cache/neighbor_info')
+        with open(f'./cache/neighbor_info/{neighbor_no}.txt', 'w', encoding='utf-8') as f:
+            f.write(str(neighborInfo).replace("\'", "\""))
 
 
 def process_get_neighbor(process_no: int, neighbor_no, process_queue):

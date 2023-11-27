@@ -1,23 +1,28 @@
-import queue
-import tqdm
-import time
 import multiprocessing
-import threading
-import spider
-from bs4 import BeautifulSoup
 import os
+import queue
+import threading
+import time
+
+import tqdm
+
+import spider
 from spider.script import *
 
-Task_Num = MAX_PROCESS * 2
+Task_Num = MAX_PROCESS * 4
 
 
 def get_catalogues() -> list:
     catalogues = []
-    for i in range(len(district)):
-        for file in os.listdir(f"./cache/sellListContent/{district[i]}"):
-            catalogues.append(f"./cache/sellListContent/{district[i]}/{file}")
-        # for file in os.listdir(f"../cache/sellListContent/{district[i]}"):
-        #     catalogues.append(f"../cache/sellListContent/{district[i]}/{file}")
+    try:
+        for i in range(len(district)):
+            for file in os.listdir(f"./cache/sellListContent/{district[i]}"):
+                catalogues.append(f"./cache/sellListContent/{district[i]}/{file}")
+    except FileNotFoundError:
+        if __name__ == "__main__":
+            for i in range(len(district)):
+                for file in os.listdir(f"../cache/sellListContent/{district[i]}"):
+                    catalogues.append(f"../cache/sellListContent/{district[i]}/{file}")
     return catalogues
 
 
@@ -32,6 +37,9 @@ def get_house_raw(catalogue: str):
             if spider.request(house_href, file_path=file_path, cache=False, save=True,
                               filename=filename, suffix="", debug=False,
                               xpath="/html/body/div[@class = \"sellDetailPage\"]"
+                                    "/div[4]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]"
+                                    "/span[@class = \"unitPriceValue\"]|"
+                                    "/html/body/div[@class = \"sellDetailPage\"]"
                                     "/div[4]/div[1]/div[2]/div[3]/div[3]/div[2]|"
                                     "/html/body/div[@class = \"sellDetailPage\"]"
                                     "/div[4]/div[1]/div[2]/div[4]/div[1]|"

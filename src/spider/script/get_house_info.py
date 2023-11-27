@@ -24,7 +24,9 @@ def get_house_info(house_raw: str):
     with open(house_raw, encoding="utf-8") as f:
         html = f.read()
     soup = BeautifulSoup(html, "lxml")
+    price_info = soup.select_one("span.unitPriceValue").text
     year_info = soup.select_one("div.subInfo").text.split('/')[0]
+    print(year_info,file_path)
     position_info = soup.select_one("div.communityName > a").get('href')
     position_info = position_info.split('/')[-2]
     around_info = [pair.text for pair in soup.select("div.areaName >span > a")]
@@ -44,10 +46,14 @@ def get_house_info(house_raw: str):
         'houseOrientation': house_info.pop(1)[1],
         'buildingStructure': house_info.pop(1)[1],
         'houseDecoration': house_info.pop(1)[1],
+        'price': price_info,
     }
     dir_path = file_path.rsplit('/', 1)[0]
     if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
+        try:
+            os.makedirs(dir_path)
+        except FileExistsError:
+            pass
         print(f"\rCreate {dir_path}")
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(str(houseInfo).replace('\'', '\"'))
