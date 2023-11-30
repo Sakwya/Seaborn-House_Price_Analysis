@@ -50,7 +50,9 @@
 									<el-text size="large" type="primary">价格地图</el-text>
 								</template>
 								<div class="flex-row">
-									<el-input-number v-model="min_price" min="0" :max="max_price" :step="1000"
+									<el-input-number v-model="min_price" min="0" v-if="max_price" :max="max_price"
+										:step="1000" placeholder="最低价格"></el-input-number>
+									<el-input-number v-model="min_price" min="0" v-else :step="1000"
 										placeholder="最低价格"></el-input-number>
 									<div class="space"></div>
 									<el-input-number v-model="max_price" :min="min_price" :step="1000"
@@ -85,7 +87,7 @@
 						map_price_range_base64: void 0,
 						min_price: null,
 						max_price: null,
-						figure_size : "samll",
+						figure_size: "samll",
 						distracts: [
 							"浦东",
 							"闵行",
@@ -137,6 +139,14 @@
 						)
 					},
 					map_price_range() {
+						if(this.min_price>=this.max_price){
+							ElMessage({
+								message: "最高价格需要高于最低价格。",
+								type: 'error',
+							})
+							return
+						}
+						
 						let data = JSON.stringify({
 							min_price: this.min_price,
 							max_price: this.max_price,
