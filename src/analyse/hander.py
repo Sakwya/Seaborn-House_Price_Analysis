@@ -3,7 +3,7 @@ import re
 
 
 def getDataFrame():
-    df = pd.read_csv("./house_info.csv", encoding="utf-8-sig")
+    df = pd.read_csv("../static/house_info.csv", encoding="utf-8-sig")
     district = df['district'].to_numpy()
     region = df['region'].to_numpy()
     df['buildingYear'] = df['buildingYear'].apply(lambda x: applyRe(x, "(\\d+)"))
@@ -43,4 +43,4 @@ def setNone(x: str, pattern: str):
 
 
 if __name__ == "__main__":
-    getDataFrame().to_csv("Processed.csv", encoding="utf-8-sig", index=False)
+    getDataFrame().to_csv("../static/Processed.csv", encoding="utf-8-sig", index=False)

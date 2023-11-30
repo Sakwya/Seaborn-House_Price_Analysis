@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>{{title}}</title>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+		<script src="https://unpkg.com/vue@next"></script>
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+		<script src="https://unpkg.com/element-plus"></script>
+		<script src="//unpkg.com/@element-plus/icons-vue"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+		<link rel="stylesheet" href="/static/css/main.css" />
+	</head>
+
+	<body>
+		<div id="app">
+			<el-container>
+				<el-header>
+					<el-menu :default-active="activeIndex" mode="horizontal" :ellipsis="false">
+						<el-menu-item size="large" class="is-active" index="0">
+							<el-text size="large" type="primary">{{title}}</el-text>
+						</el-menu-item>
+						<div style="flex-grow: 1;"></div>
+					</el-menu>
+				</el-header>
+				<el-main>
+					<el-card class="root-card">
+						<el-collapse>
+							<el-collapse-item name="1">
+								<template #title>
+									<el-text size="large" type="primary">区域房屋价格直方图</el-text>
+								</template>
+								<div class="flex-row">
+									<el-select v-model="distract" placeholder="区域">
+										<el-option v-for="item in distracts" :key="item" :label="item" :value="item" />
+									</el-select>
+									<div class="space"></div>
+									<el-button v-on:click="hist_price_district" v-if="distract"
+										type="primary">获取图像</el-button>
+									<el-button v-else disabled type="primary">获取图像</el-button>
+								</div>
+								<div class="flex-row" v-if="hist_price_district_base64">
+									<el-card>
+										<el-image :src="hist_price_district_base64" :fit="contain"></el-image>
+									</el-card>
+								</div>
+							</el-collapse-item>
+							<el-collapse-item name="2">
+								<template #title>
+									<el-text size="large" type="primary">价格地图</el-text>
+								</template>
+								<div class="flex-row">
+									<el-input-number v-model="min_price" min="0" :max="max_price" :step="1000"
+										placeholder="最低价格"></el-input-number>
+									<div class="space"></div>
+									<el-input-number v-model="max_price" :min="min_price" :step="1000"
+										placeholder="最高价格"></el-input-number>
+									<div class="space"></div>
+									<el-select v-model="figure_size" placeholder="区域">
+										<el-option label="小" value="small"></el-option>
+										<el-option label="中" value="medium"></el-option>
+										<el-option label="大" value="large"></el-option>
+									</el-select>
+									<div class="space"></div>
+									<el-button v-on:click="map_price_range" type="primary">获取图像</el-button>
+								</div>
+								<div class="flex-row" v-if="map_price_range_base64">
+									<el-card>
+										<el-image :src="map_price_range_base64" :fit="contain"></el-image>
+									</el-card>
+								</div>
+							</el-collapse-item>
+						</el-collapse>
+					</el-card>
+				</el-main>
+			</el-container>
+		</div>
+		<script>
+			const App = {
+				data() {
+					return {
+						message: "Hello Element Plus",
+						distract: void 0,
+						hist_price_district_base64: void 0,
+						map_price_range_base64: void 0,
+						min_price: null,
+						max_price: null,
+						figure_size : "samll",
+						distracts: [
+							"浦东",
+							"闵行",
+							"宝山",
+							"徐汇",
+							"普陀",
+							"杨浦",
+							"长宁",
+							"松江",
+							"嘉定",
+							"黄浦",
+							"静安",
+							"虹口",
+							"青浦",
+							"奉贤",
+							"金山",
+							"崇明"
+						],
+					};
+				},
+				methods: {
+					axios_get(func, kwargs, successCallback, errorCallback) {
+						let formData = new FormData()
+						formData.append('function', func);
+						formData.append('kwargs', kwargs);
+						axios.post('/api', formData)
+							.then(successCallback)
+							.catch(errorCallback);
+					},
+					hist_price_district() {
+						this.axios_get("hist_price_district", this.distract,
+							(response) => {
+								if (response.status === 200) {
+									ElMessage({
+										message: '图像生成成功。',
+										type: 'success',
+									})
+									this.hist_price_district_base64 = "data:image/png;base64," + response.data
+								} else {
+									console.log(response)
+								}
+							},
+							(error) => {
+								ElMessage({
+									message: error.message,
+									type: 'error',
+								})
+							}
+						)
+					},
+					map_price_range() {
+						let data = JSON.stringify({
+							min_price: this.min_price,
+							max_price: this.max_price,
+							figure_size: this.figure_size,
+						})
+						this.axios_get("map_price_range", data,
+							(response) => {
+								if (response.status === 200) {
+									ElMessage({
+										message: '图像生成成功。',
+										type: 'success',
+									})
+									this.map_price_range_base64 = "data:image/png;base64," + response.data
+								} else {
+									console.log(response)
+								}
+							},
+							(error) => {
+								ElMessage({
+									message: error.message,
+									type: 'error',
+								})
+							}
+						)
+					},
+				},
+				mounted() {
+					window.$ = this
+					console.log("try to do it.")
+				}
+			};
+			const {
+				ElMessage
+			} = ElementPlus;
+			const app = Vue.createApp(App);
+			app.component(ElMessage.name, ElMessage);
+			app.use(ElementPlus);
+			app.mount("#app");
+		</script>
+	</body>
+</html>

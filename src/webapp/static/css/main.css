@@ -1,0 +1,30 @@
+:root {
+}
+
+body {
+	font-family: "Segoe UI", sans-serif;
+	background-color: #eee;
+	margin: 0px;
+}
+
+.el-header {
+	padding: 0px;
+}
+.space{
+	width: 1rem;
+}
+.root-card{
+	margin: 0px 200px;
+	
+}
+.el-card {
+	border-radius: 12px;
+}
+
+.flex-row{
+	display: flex;
+	justify-content: flex-start;
+	align-items: baseline;
+	flex-direction: row;
+	margin: 1rem 0;
+}
