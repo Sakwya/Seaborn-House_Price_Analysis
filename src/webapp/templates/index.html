@@ -11,7 +11,6 @@
 		<link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 		<link rel="stylesheet" href="/static/css/main.css" />
 	</head>
-
 	<body>
 		<div id="app">
 			<el-container>
@@ -35,8 +34,8 @@
 										<el-option v-for="item in distracts" :key="item" :label="item" :value="item" />
 									</el-select>
 									<div class="space"></div>
-									<el-button v-on:click="hist_price_district" v-if="distract"
-										type="primary">获取图像</el-button>
+									<el-button v-on:click="hist_price_district" v-if="distract" type="primary">获取图像
+									</el-button>
 									<el-button v-else disabled type="primary">获取图像</el-button>
 								</div>
 								<div class="flex-row" v-if="hist_price_district_base64">
@@ -87,7 +86,7 @@
 						map_price_range_base64: void 0,
 						min_price: null,
 						max_price: null,
-						figure_size: "samll",
+						figure_size: "small",
 						distracts: [
 							"浦东",
 							"闵行",
@@ -139,14 +138,14 @@
 						)
 					},
 					map_price_range() {
-						if(this.min_price>=this.max_price){
+						if (this.min_price >= this.max_price && this.min_price != null && this.max_price != null) {
 							ElMessage({
 								message: "最高价格需要高于最低价格。",
 								type: 'error',
 							})
 							return
 						}
-						
+
 						let data = JSON.stringify({
 							min_price: this.min_price,
 							max_price: this.max_price,
