@@ -57,7 +57,7 @@
 									<el-input-number v-model="max_price" :min="min_price" :step="1000"
 										placeholder="最高价格"></el-input-number>
 									<div class="space"></div>
-									<el-select v-model="figure_size" placeholder="区域">
+									<el-select v-model="figure_size" placeholder="图像大小">
 										<el-option label="小" value="small"></el-option>
 										<el-option label="中" value="medium"></el-option>
 										<el-option label="大" value="large"></el-option>
@@ -68,6 +68,86 @@
 								<div class="flex-row" v-if="map_price_range_base64">
 									<el-card>
 										<el-image :src="map_price_range_base64" :fit="contain"></el-image>
+									</el-card>
+								</div>
+							</el-collapse-item>
+							<el-collapse-item name="3">
+								<template #title>
+									<el-text size="large" type="primary">聚类分析</el-text>
+								</template>
+								<div class="flex-row">
+									<el-select v-model="cluster_func" placeholder="聚类方法">
+										<el-option label="KMeans" value="K"></el-option>
+										<el-option label="DBSCAN" value="D"></el-option>
+										<el-option label="AgglomerativeClustering" value="A"></el-option>
+									</el-select>
+								</div>
+								<div class="flex-row" v-if="cluster_func=='K'">
+									<el-input-number v-model="n_clusters" min="10" :step="10"
+										placeholder="n_clusters"></el-input-number>
+									<div class="space"></div>
+									<el-select v-model="normalization_func" placeholder="数据处理方法">
+										<el-option label="归一化" value='n'></el-option>
+										<el-option label="标准化" value='s'></el-option>
+										<el-option label="无" value=''></el-option>
+									</el-select>
+									<div class="space"></div>
+									<el-select v-model="figure_size" placeholder="图像大小">
+										<el-option label="小" value="small"></el-option>
+										<el-option label="中" value="medium"></el-option>
+										<el-option label="大" value="large"></el-option>
+									</el-select>
+									<div class="space"></div>
+									<el-button v-on:click="cluster_price" type="primary">获取图像</el-button>
+								</div>
+								<div class="flex-row" v-if="cluster_func=='D'">
+									<el-input-number v-model="epsilon" min="0"
+										placeholder="epsilon"></el-input-number>
+									<div class="space"></div>
+									<el-input-number v-model="min_samples" min="0" :step="1"
+										placeholder="min_samples"></el-input-number>
+									<div class="space"></div>
+									<el-select v-model="normalization_func" placeholder="数据处理方法">
+										<el-option label="归一化" value='n'></el-option>
+										<el-option label="标准化" value='s'></el-option>
+										<el-option label="无" value=''></el-option>
+									</el-select>
+									<div class="space"></div>
+									<el-select v-model="figure_size" placeholder="图像大小">
+										<el-option label="小" value="small"></el-option>
+										<el-option label="中" value="medium"></el-option>
+										<el-option label="大" value="large"></el-option>
+									</el-select>
+									<div class="space"></div>
+									<el-button v-on:click="cluster_price" type="primary">获取图像</el-button>
+								</div>
+								<div class="flex-row" v-if="cluster_func=='A'">
+									<el-input-number v-model="n_clusters" min="10" :step="10"
+										placeholder="n_clusters"></el-input-number>
+									<div class="space"></div>
+									<el-select v-model="linkage" placeholder="距离计算方法">
+										<el-option label="ward" value="ward"></el-option>
+										<el-option label="complete" value="complete"></el-option>
+										<el-option label="average" value="average"></el-option>
+										<el-option label="single" value="single"></el-option>
+									</el-select>
+									<el-select v-model="normalization_func" placeholder="数据处理方法">
+										<el-option label="归一化" value='n'></el-option>
+										<el-option label="标准化" value='s'></el-option>
+										<el-option label="无" value=''></el-option>
+									</el-select>
+									<div class="space"></div>
+									<el-select v-model="figure_size" placeholder="图像大小">
+										<el-option label="小" value="small"></el-option>
+										<el-option label="中" value="medium"></el-option>
+										<el-option label="大" value="large"></el-option>
+									</el-select>
+									<div class="space"></div>
+									<el-button v-on:click="cluster_price" type="primary">获取图像</el-button>
+								</div>
+								<div class="flex-row" v-if="cluster_price_base64">
+									<el-card>
+										<el-image :src="cluster_price_base64" :fit="contain"></el-image>
 									</el-card>
 								</div>
 							</el-collapse-item>
@@ -84,9 +164,16 @@
 						distract: void 0,
 						hist_price_district_base64: void 0,
 						map_price_range_base64: void 0,
+						cluster_price_base64: void 0,
 						min_price: null,
 						max_price: null,
 						figure_size: "small",
+						cluster_func: void 0,
+						n_clusters: 100,
+						epsilon: 0.01,
+						min_samples: 5,
+						linkage: "ward",
+						normalization_func: '',
 						distracts: [
 							"浦东",
 							"闵行",
@@ -171,6 +258,36 @@
 							}
 						)
 					},
+					cluster_price() {
+						let data = JSON.stringify({
+							func: this.cluster_func,
+							figure_size: this.figure_size,
+							n_clusters: this.n_clusters,
+							normalization_func: this.normalization_func,
+							epsilon: this.epsilon,
+							min_samples: this.min_samples,
+							linkage: this.linkage,
+						})
+						this.axios_get("cluster_price", data,
+							(response) => {
+								if (response.status === 200) {
+									ElMessage({
+										message: '图像生成成功。',
+										type: 'success',
+									})
+									this.cluster_price_base64 = "data:image/png;base64," + response.data
+								} else {
+									console.log(response)
+								}
+							},
+							(error) => {
+								ElMessage({
+									message: error.message,
+									type: 'error',
+								})
+							}
+						)
+					}
 				},
 				mounted() {
 					window.$ = this
