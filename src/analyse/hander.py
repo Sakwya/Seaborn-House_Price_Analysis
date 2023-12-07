@@ -116,10 +116,10 @@ if __name__ == "__main__":
     x = getDataFrame()[['longitude', 'latitude', 'price']]
     x['price'] = normalization(x['price'].to_numpy())[0]
     # kMeans(x, 200)
-    aGglomerative(x,100)
+    aGglomerative(x, 100)
 
     x['price'] = standardization(x['price'].to_numpy())[0]
     # kMeans(x, 200)
-    aGglomerative(x,100)
+    aGglomerative(x, 100)
     plt.show()
     print(x)
